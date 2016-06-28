@@ -19,7 +19,7 @@ process.removeAllListeners("uncaughtException");
 // make sure to update the resulting contract data with the correct values.
 var contract = {
   solidity: source,
-  abi: result.contracts.Example.interface,
+  abi: JSON.parse(result.contracts.Example.interface),
   binary: "0x" + result.contracts.Example.bytecode,
   position_of_value: "0x0000000000000000000000000000000000000000000000000000000000000000",
   expected_default_value: 5,
@@ -491,6 +491,37 @@ var tests = function(web3) {
     });
 
   });
+
+  describe('contract scenario (web3)', function(){
+
+    var exampleContract
+    
+    it('should deploy a contract', function(done) {
+      web3.eth.contract(contract.abi).new({ data: contract.binary, from: accounts[0] }, function(err, result){
+        if(err) return done(err);
+        if(!result.address) return;
+        exampleContract = result
+        done();
+      })
+    })
+
+    it('should have value of 5', function(done) {
+      exampleContract.value(function(err, result){
+        if(err) return done(err);
+        assert.equal(result.toNumber(), 5);
+        done();
+      })
+    })
+
+    it('should set value to 25', function(done) {
+      exampleContract.value(function(err, result){
+        if(err) return done(err);
+        assert.equal(result.toNumber(), 5);
+        done();
+      })
+    })
+
+  })
 
   describe("eth_getTransactionByHash", function() {
     it("should return transaction"); //, function() {
