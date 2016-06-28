@@ -513,10 +513,25 @@ var tests = function(web3) {
       })
     })
 
-    it('should set value to 25', function(done) {
+    it('should set value to 10', function(done) {
+      exampleContract.setValue(10, { from: accounts[0] }, function(err, result){
+        if(err) return done(err);
+        done();
+      })
+    })
+
+    it('should have value of 10', function(done) {
       exampleContract.value(function(err, result){
         if(err) return done(err);
-        assert.equal(result.toNumber(), 5);
+        assert.equal(result.toNumber(), 10);
+        done();
+      })
+    })
+
+    it('should have triggered ValueSet(10)', function(done) {
+      exampleContract.ValueSet({}, { fromBlock: 0, toBlock: 'latest' }).get(function(err, result){
+        if(err) return done(err);
+        assert.equal(result.length, 1);
         done();
       })
     })
